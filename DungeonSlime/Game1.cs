@@ -30,6 +30,12 @@ public class Game1 : Core
     // Tracks the velocity of the bat.
     private Vector2 _batVelocity;
 
+    // Defines the tilemap to draw.
+    private Tilemap _tilemap;
+
+    // Defines the bounds of the room that the slime and bat are contained within.
+    private Rectangle _roomBounds;
+
     public Game1() : base("Dungeon Slime", 1280, 720, false)
     {
 
@@ -37,13 +43,24 @@ public class Game1 : Core
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
-
         base.Initialize();
 
-        // Set the initial position of the bat to be 10px
-        // to the right of the slime.
-        _batPosition = new Vector2(_slime.Width + 10, 0);
+        Rectangle screenBounds = GraphicsDevice.PresentationParameters.Bounds;
+
+        _roomBounds = new Rectangle(
+             (int)_tilemap.TileWidth,
+             (int)_tilemap.TileHeight,
+             screenBounds.Width - (int)_tilemap.TileWidth * 2,
+             screenBounds.Height - (int)_tilemap.TileHeight * 2
+         );
+
+        // Initial slime position will be the center tile of the tile map.
+        int centerRow = _tilemap.Rows / 2;
+        int centerColumn = _tilemap.Columns / 2;
+        _slimePosition = new Vector2(centerColumn * _tilemap.TileWidth, centerRow * _tilemap.TileHeight);
+
+        // Initial bat position will be in the top left corner of the room
+        _batPosition = new Vector2(_roomBounds.Left, _roomBounds.Top);
 
         // Assign the initial random velocity to the bat.
         AssignRandomBatVelocity();
@@ -62,6 +79,9 @@ public class Game1 : Core
         _bat = atlas.CreateAnimatedSprite("bat-animation");
         _bat.Scale = new Vector2(4.0f, 4.0f);
 
+        // Create the tilemap from the XML configuration file.
+        _tilemap = Tilemap.FromFile(Content, "images/tilemap-definition.xml");
+        _tilemap.Scale = new Vector2(4.0f, 4.0f);
 
     }
 
@@ -297,13 +317,14 @@ public class Game1 : Core
         // Begin the sprite batch to prepare for rendering.
         SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+        // Draw the tilemap.
+        _tilemap.Draw(SpriteBatch);
+
         // Draw the slime sprite.
         _slime.Draw(SpriteBatch, _slimePosition);
 
-
         // Draw the bat sprite.
         _bat.Draw(SpriteBatch, _batPosition);
-
 
         // Always end the sprite batch when finished.
         SpriteBatch.End();
