@@ -5,6 +5,7 @@ namespace MonoGameLibrary;
 
 public readonly struct Circle : IEquatable<Circle>
 {
+    // FIELDS
     private static readonly Circle s_empty = new Circle();
 
     /// <summary>
@@ -23,12 +24,12 @@ public readonly struct Circle : IEquatable<Circle>
     public readonly int Radius;
 
     /// <summary>
-    /// Gets the location of the center of this circle.
+    /// Gets the location of the center of this circle. Getter!
     /// </summary>
     public readonly Point Location => new Point(X, Y);
 
     /// <summary>
-    /// Gets a circle with X=0, Y=0, and Radius=0.
+    /// Gets a circle with X=0, Y=0, and Radius=0. Getter!
     /// </summary>
     public static Circle Empty => s_empty;
 
